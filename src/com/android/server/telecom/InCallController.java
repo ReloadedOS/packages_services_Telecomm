@@ -325,7 +325,8 @@ public class InCallController extends CallsManagerListenerBase implements
             mInCallServiceInfo.setBindingStartTime(mClockProxy.elapsedRealtime());
             if (!mContext.bindServiceAsUser(intent, mServiceConnection,
                     Context.BIND_AUTO_CREATE | Context.BIND_FOREGROUND_SERVICE
-                            | Context.BIND_ALLOW_BACKGROUND_ACTIVITY_STARTS,
+                        | Context.BIND_ALLOW_BACKGROUND_ACTIVITY_STARTS
+                        | Context.BIND_SCHEDULE_LIKE_TOP_APP,
                     UserHandle.CURRENT)) {
                 Log.w(this, "Failed to connect.");
                 mIsConnected = false;
@@ -2009,6 +2010,9 @@ public class InCallController extends CallsManagerListenerBase implements
             List<ComponentName> componentsUpdated = new ArrayList<>();
             for (Map.Entry<InCallServiceInfo, IInCallService> entry : mInCallServices.entrySet()) {
                 InCallServiceInfo info = entry.getKey();
+                if (info == null) {
+                    continue;
+                }
                 if (call.isExternalCall() && !info.isExternalCallsSupported()) {
                     continue;
                 }
